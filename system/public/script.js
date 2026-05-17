@@ -91,14 +91,12 @@ async function fetchData() {
         db = await response.json();
         
         // Dynamically update school metadata in sidebar
-        if (db.schoolName) {
-            const el = document.getElementById('sidebarSchoolName');
-            if (el) el.textContent = db.schoolName;
-        }
-        if (db.schoolYear) {
-            const el = document.getElementById('sidebarSchoolYear');
-            if (el) el.textContent = db.schoolYear;
-        }
+        const elName = document.getElementById('sidebarSchoolName');
+        if (elName) elName.textContent = db.schoolName || "المؤسسة التعليمية";
+        
+        const elYear = document.getElementById('sidebarSchoolYear');
+        if (elYear) elYear.textContent = db.schoolYear || "الموسم الدراسي";
+
     } catch (e) {
         console.error("Error fetching data:", e);
         showToast("خطأ في جلب البيانات", "error");

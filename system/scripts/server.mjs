@@ -69,10 +69,12 @@ app.post('/upload', upload.array('files'), async (req, res) => {
 
             const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
             
-            // Robust extraction of Level, Subject, and Stage
+            // Robust extraction of Level, Subject, Stage, School Name, and Year
             let level = "";
             let subject = "";
             let stageNum = null;
+            let schoolName = "";
+            let schoolYear = "";
 
             // Search first 20 rows for metadata
             for (let r = 0; r < 20; r++) {
@@ -82,6 +84,8 @@ app.post('/upload', upload.array('files'), async (req, res) => {
                     const cell = String(row[c] || "");
                     if (cell.includes("المستوى")) level = String(row[c+1] || "").trim();
                     if (cell.includes("المادة")) subject = String(row[c+1] || "").trim();
+                    if (cell.includes("المؤسسة")) schoolName = String(row[c+1] || "").trim();
+                    if (cell.includes("السنة الدراسية") || cell.includes("الموسم الدراسي")) schoolYear = String(row[c+1] || "").trim();
                     if (cell.includes("المرحلة") && !stageNum) {
                         const val = String(row[c+1] || cell); // Check current or next cell
                         const match = val.match(/\d/);
@@ -89,6 +93,10 @@ app.post('/upload', upload.array('files'), async (req, res) => {
                     }
                 }
             }
+
+            if (schoolName) db.schoolName = schoolName;
+            if (schoolYear) db.schoolYear = schoolYear;
+
 
             if (!stageNum || !subject) {
                 // Fallback for stage if not found in cells
