@@ -1613,3 +1613,166 @@ tr:hover {
     font-weight: 700;
     color: var(--secondary);
 }
+
+/* --- Print & PDF Export Styles --- */
+.header-action-group {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.btn-print {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--secondary);
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Tajawal', sans-serif;
+}
+
+.btn-print i {
+    font-size: 1rem;
+}
+
+.btn-print:hover {
+    background: var(--secondary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.print-only-note {
+    display: none;
+}
+
+@media print {
+    /* Hide the sidebar, top header, page grid, filter controls and toast containers entirely */
+    .sidebar, header, .stats-grid, .main-charts, .queued-files-container, 
+    .filter-dashboard, #filterStatsBar, .toast-container, .table-container {
+        display: none !important;
+    }
+    
+    /* Hide dashboard cards except studentDetail */
+    .dashboard-grid {
+        display: block !important;
+    }
+    
+    #emptyDashboardState {
+        display: none !important;
+    }
+    
+    /* Print layout for studentDetail */
+    #studentDetail {
+        display: block !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        background: #fff !important;
+        color: #000 !important;
+        border: none !important;
+        border-radius: 0 !important;
+    }
+    
+    /* Content spacing */
+    .content {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+    
+    body {
+        background: #fff !important;
+        color: #000 !important;
+    }
+    
+    /* Hide interactive elements inside studentDetail */
+    .btn-print, .close-btn, .btn-save-note, #studentNote {
+        display: none !important;
+    }
+    
+    /* Make note appear beautifully in print */
+    .print-only-note {
+        display: block !important;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #1e293b;
+        background: #f8fafc !important;
+        border-right: 4px solid var(--secondary) !important;
+        padding: 12px 15px !important;
+        border-radius: 6px !important;
+        margin-top: 10px !important;
+        min-height: 40px;
+        white-space: pre-wrap;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    /* Force page adjusts to ensure graphs and colors are captured */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    /* Optimize detail body */
+    .detail-body {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 20px !important;
+        padding-top: 15px !important;
+    }
+    
+    /* Restrict chart size for A4 printing */
+    .detail-chart {
+        height: 220px !important;
+        max-height: 220px !important;
+        page-break-inside: avoid !important;
+        margin-bottom: 20px !important;
+    }
+    
+    /* Optimize all competency tables for printing */
+    .comp-table {
+        font-size: 11px !important;
+        width: 100% !important;
+        border-collapse: collapse !important;
+    }
+    
+    .comp-table th, .comp-table td {
+        padding: 6px 4px !important;
+        border: 1px solid #94a3b8 !important;
+        text-align: center !important;
+    }
+    
+    .stage-comp-table-wrapper {
+        border: 1px solid #cbd5e1 !important;
+        padding: 10px !important;
+        page-break-inside: avoid !important;
+    }
+    
+    /* Keep sections together */
+    .student-notes, .student-grades-table, .competency-tables-container {
+        page-break-inside: avoid !important;
+    }
+    
+    /* School Name & Year size adjustments in print */
+    .student-info h2 {
+        font-size: 1.8rem !important;
+    }
+    
+    .student-overall-avg {
+        font-size: 1.6rem !important;
+        padding: 4px 15px !important;
+        background-color: var(--secondary) !important;
+        color: white !important;
+    }
+}
+

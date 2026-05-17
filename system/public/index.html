@@ -111,7 +111,14 @@
                                     <span id="detLevel">المستوى</span>
                                 </div>
                             </div>
-                            <button class="close-btn" onclick="hideDetail()"><i class="fas fa-times"></i></button>
+                            <div class="header-action-group">
+                                <button class="btn-print" onclick="printStudentCard()" title="تصدير كـ PDF / طباعة">
+                                    <i class="fas fa-file-pdf"></i>
+                                    <span>تصدير PDF</span>
+                                </button>
+                                <button class="close-btn" onclick="hideDetail()"><i class="fas fa-times"></i></button>
+                            </div>
+
                         </div>
                         <div class="detail-body">
                             <div class="detail-chart">
@@ -141,8 +148,10 @@
                                 <div class="student-notes">
                                     <h4>ملاحظات الأستاذ (للقاء الآباء)</h4>
                                     <textarea id="studentNote" placeholder="اكتب هنا توجيهات خاصة للتلميذ أو ملاحظات للأب..."></textarea>
+                                    <div id="printNoteContent" class="print-only-note"></div>
                                     <button class="btn-save-note" onclick="saveNote()">حفظ الملاحظة</button>
                                 </div>
+
                                 <div id="competencyTablesContainer" class="competency-tables-container">
                                     <!-- Stage competency tables will be injected here -->
                                 </div>

@@ -1134,4 +1134,14 @@ async function confirmWipeData() {
     }
 }
 
+function printStudentCard() {
+    const noteArea = document.getElementById('studentNote');
+    const printNote = document.getElementById('printNoteContent');
+    if (noteArea && printNote) {
+        printNote.textContent = noteArea.value.trim() || "لا توجد ملاحظات خاصة.";
+    }
+    window.print();
+}
+
 window.onload = init;
+
