@@ -80,7 +80,7 @@ Double-click the `boot.bat` file in the `system/` directory (or the `Lancer Prof
 The targeted files are the evaluation sheets exported from the **Massar** system via this path:
 **ملف الكفايات (Competencies)** → **تصدير مستويات التحكم (Export Mastery Levels)**
 
-![How to export Massar Excel files](assets/export_guide.png)
+![How to export Massar Excel files](system/assets/export_guide.png)
 
 
 ---
