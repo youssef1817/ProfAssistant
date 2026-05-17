@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة ProfAssistant - التتبع والتحليل الذكي لنقط التلاميذ</title>
+    <link rel="stylesheet" href="libs/fonts.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="libs/chart.js"></script>
+    <script src="libs/font-awesome.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span style="font-family: 'Outfit', sans-serif; font-weight: 700; letter-spacing: 0.5px;">ProfAssistant</span>
+            </div>
+            <nav>
+                <a href="#" class="active" onclick="showSection('dashboard')"><i class="fas fa-id-card"></i> <span>بطاقة التلميذ</span></a>
+                <a href="#" onclick="showSection('classProgress')"><i class="fas fa-chart-line"></i> <span>إحصائيات القسم</span></a>
+                <a href="#" onclick="showSection('upload')"><i class="fas fa-file-import"></i> <span>استيراد البيانات</span></a>
+                <a href="#" onclick="showSection('students')"><i class="fas fa-users"></i> <span>قائمة التلاميذ</span></a>
+            </nav>
+            <div class="sidebar-actions">
+                <button class="action-btn sync-btn-sidebar" id="sidebarSyncBtn" onclick="triggerManualSync()">
+                    <i class="fas fa-sync-alt" id="sidebarSyncIcon"></i>
+                    <span>مزامنة المستودع</span>
+                </button>
+            </div>
+            <div class="sidebar-footer">
+                <p id="sidebarSchoolName">مدرسة الزاوية الرحالية</p>
+                <small id="sidebarSchoolYear">2025/2026</small>
+            </div>
+        </aside>
+ 
+        <!-- Main Content -->
+        <main class="content">
+            <header>
+                <h1>مرحباً بك في منصة <span style="color: var(--secondary); font-family: 'Outfit', 'Tajawal', sans-serif; font-weight: 700;">ProfAssistant</span></h1>
+                <div class="search-bar">
+                    <input type="text" id="globalSearch" placeholder="بحث عن تلميذ..." onkeyup="applyFilters()" autocomplete="off">
+                    <i class="fas fa-search"></i>
+                    <div id="liveSearchResults" class="live-search-results"></div>
+                </div>
+            </header>
+
+            <!-- Premium Filter Control Panel -->
+            <div class="filter-dashboard" style="display: none;">
+                <!-- Subject Row -->
+                <div class="filter-row">
+                    <span class="filter-row-label">
+                        <i class="fas fa-book-open"></i> المادة الدراسية
+                    </span>
+                    <div class="subject-toggle-group" id="subjectToggleGroup">
+                        <button class="subject-toggle-btn active" data-subject="الرياضيات" onclick="toggleSubject('الرياضيات')">
+                            <i class="fas fa-calculator"></i>
+                            <span>الرياضيات</span>
+                        </button>
+                        <button class="subject-toggle-btn active" data-subject="اللغة الفرنسية" onclick="toggleSubject('اللغة الفرنسية')">
+                            <i class="fas fa-language"></i>
+                            <span>الفرنسية</span>
+                        </button>
+                        <button class="subject-toggle-btn active" data-subject="اللغة العربية" onclick="toggleSubject('اللغة العربية')">
+                            <i class="fas fa-feather-alt"></i>
+                            <span>العربية</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Level Row -->
+                <div class="filter-row">
+                    <span class="filter-row-label">
+                        <i class="fas fa-layer-group"></i> المستوى الدراسي
+                    </span>
+                    <div class="subject-toggle-group" id="levelChips">
+                        <!-- Dynamically filled with subject-toggle-btns -->
+                    </div>
+                </div>
+
+                <!-- Class Row -->
+                <div class="filter-row">
+                    <span class="filter-row-label">
+                        <i class="fas fa-users-rectangle"></i> القسم / الفوج
+                    </span>
+                    <div class="subject-toggle-group" id="classChips">
+                        <!-- Dynamically filled with subject-toggle-btns -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contextual Filter Stats Bar -->
+            <div id="filterStatsBar" class="filter-stats-bar" style="display:none;">
+            </div>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <div class="dashboard-grid">
+                    <div id="studentDetail" class="student-detail-card" style="display: none;">
+                        <div class="detail-header">
+                            <div class="student-info">
+                                <div class="student-name-row">
+                                    <h2 id="detNameContainer"><i class="fas fa-user-graduate"></i> <span id="detName">اسم التلميذ</span></h2>
+                                    <div class="student-overall-avg" id="detAvg">0.00</div>
+                                </div>
+                                <div class="student-meta">
+                                    <span id="detMassar">G123456789</span>
+                                    <span class="meta-divider">|</span>
+                                    <span id="detLevel">المستوى</span>
+                                </div>
+                            </div>
+                            <button class="close-btn" onclick="hideDetail()"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="detail-body">
+                            <div class="detail-chart">
+                                <canvas id="studentChart"></canvas>
+                            </div>
+                            <div class="detail-report">
+                                <h3>تقرير المستوى الدراسي</h3>
+                                <div id="reportContent" class="report-text">
+                                    سيظهر التقرير التحليلي هنا بناءً على النتائج المحصل عليها...
+                                </div>
+                                <div class="student-grades-table">
+                                    <h4>جدول النقط التفصيلي</h4>
+                                    <table id="detGradesTable">
+                                        <thead>
+                                            <tr>
+                                                <th>المادة</th>
+                                                <th>م1</th>
+                                                <th>م2</th>
+                                                <th>م3</th>
+                                                <th>م4</th>
+                                                <th>م5</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                                <div class="student-notes">
+                                    <h4>ملاحظات الأستاذ (للقاء الآباء)</h4>
+                                    <textarea id="studentNote" placeholder="اكتب هنا توجيهات خاصة للتلميذ أو ملاحظات للأب..."></textarea>
+                                    <button class="btn-save-note" onclick="saveNote()">حفظ الملاحظة</button>
+                                </div>
+                                <div id="competencyTablesContainer" class="competency-tables-container">
+                                    <!-- Stage competency tables will be injected here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="emptyDashboardState" class="empty-state" style="text-align: center; padding: 4rem 2rem; color: var(--text-light); width: 100%;">
+                        <i class="fas fa-search" style="font-size: 3rem; color: var(--border); margin-bottom: 1rem;"></i>
+                        <h2>الرجاء البحث عن تلميذ لعرض بطاقته المفصلة</h2>
+                        <p>استخدم شريط البحث بالأعلى للوصول السريع</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Class Progress Section -->
+            <section id="classProgress" class="section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="icon"><i class="fas fa-user-graduate"></i></div>
+                        <div class="info">
+                            <h3 id="totalStudents">0</h3>
+                            <p>إجمالي التلاميذ</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon"><i class="fas fa-book"></i></div>
+                        <div class="info">
+                            <h3 id="totalSubjects">0</h3>
+                            <p>المواد المسجلة</p>
+                        </div>
+                    </div>
+                    <div class="stat-card primary">
+                        <div class="icon"><i class="fas fa-star"></i></div>
+                        <div class="info">
+                            <h3 id="classAvg">0.00</h3>
+                            <p>المعدل العام للقسم</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="main-charts" style="max-width: 1000px; margin: 0 auto;">
+                    <div class="chart-container" style="height: 400px;">
+                        <h3>تطور معدلات القسم حسب المراحل</h3>
+                        <canvas id="mainProgressChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Upload Section -->
+            <section id="upload" class="section">
+                <div class="upload-zone" id="dropZone">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h2>اسحب ملفات Excel هنا</h2>
+                    <p>أو اختر من جهازك</p>
+                    <div class="upload-btns">
+                        <button class="btn-primary" onclick="document.getElementById('fileInput').click()">اختر ملفات</button>
+                    </div>
+                    <input type="file" id="fileInput" multiple hidden>
+                </div>
+                
+                <div id="queuedFilesContainer" class="queued-files-container" style="display: none;">
+                    <h3>الملفات المختارة (<span id="queuedCount">0</span>)</h3>
+                    <div id="queuedFilesList" class="queued-files-list"></div>
+                    <button id="startImportBtn" class="btn-success" onclick="startImport()">ابدأ عملية الاستيراد الآن</button>
+                </div>
+
+                <div class="upload-progress" id="uploadProgress"></div>
+
+                <!-- Wipe Data Settings Card -->
+                <div class="settings-card reset-card">
+                    <div class="settings-header">
+                        <div class="settings-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="settings-desc">
+                            <h3>تهيئة المنظومة لموسم جديد (تصفير البيانات)</h3>
+                            <p>تقوم هذه العملية بمسح كافة بيانات التلاميذ، النقط، الكفايات، والملفات المخزنة في "مستودع النقط" بشكل نهائي لتصفير لوحة التحكم والبدء بسجل نظيف تماماً.</p>
+                        </div>
+                    </div>
+                    <button class="btn-danger wipe-data-btn" onclick="confirmWipeData()">
+                        <i class="fas fa-trash-alt"></i>
+                        <span>تصفير المنظومة بالكامل</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Students List Section -->
+            <section id="students" class="section">
+                <div class="table-container">
+                    <table id="studentsTable">
+                        <thead>
+                            <tr>
+                                <th>الإسم والنسب</th>
+                                <th>رقم مسار</th>
+                                <th>القسم</th>
+                                <th>المعدل العام</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    </div>
+    <!-- Floating Sync Alert Notification -->
+    <div id="floatingSyncAlert" class="floating-sync-alert" onclick="goToUploadAndSync()">
+        <div class="sync-alert-icon">
+            <i class="fas fa-database animate-bell"></i>
+        </div>
+        <div class="sync-alert-content">
+            <strong>تحديثات جديدة في المستودع!</strong>
+            <span>تم اكتشاف ملفات نقط جديدة غير مزامنة. اضغط هنا للمزامنة وتحديث لوحة التحكم فوراً.</span>
+        </div>
+        <button class="sync-alert-btn">
+            <i class="fas fa-sync-alt"></i>
+            <span>مزامنة</span>
+        </button>
+    </div>
+
+    <!-- Custom Glassmorphic Confirmation Modal -->
+    <div id="customConfirmModal" class="custom-modal-overlay">
+        <div class="custom-modal-card">
+            <div class="custom-modal-header">
+                <i class="fas fa-exclamation-triangle warning-icon"></i>
+                <h3 id="customModalTitle">تأكيد الإجراء</h3>
+            </div>
+            <div class="custom-modal-body" id="customModalBody">
+                <!-- Injected text -->
+            </div>
+            <div class="custom-modal-footer">
+                <button class="modal-btn-cancel" id="customModalCancelBtn">إلغاء</button>
+                <button class="modal-btn-confirm" id="customModalConfirmBtn">تأكيد</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+    <script src="script.js"></script>
+</body>
+</html>
