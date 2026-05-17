@@ -76,6 +76,13 @@ Double-click the `boot.bat` file in the `system/` directory (or the `Lancer Prof
 3. The system will programmatically identify the school name, school year, stage number (1–5), subjects, and student IDs.
 4. Click **"Start Import"**. The files will be parsed, student records saved to `database.json`, and the source Excel files organized inside the Grade Repository folder.
 
+### 📥 Supported Excel Files & How to Export Them
+The targeted files are the evaluation sheets exported from the **Massar** system via this path:
+**ملف الكفايات (Competencies)** → **تصدير مستويات التحكم (Export Mastery Levels)**
+
+![How to export Massar Excel files](assets/export_guide.png)
+
+
 ---
 
 ## 🔒 Open Source & Privacy First
