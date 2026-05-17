@@ -1655,13 +1655,13 @@ tr:hover {
     /* Page margins configuration */
     @page {
         size: A4 portrait;
-        margin: 0.4cm 0.6cm;
+        margin: 0.5cm 0.7cm;
     }
 
     body {
         background: #fff !important;
         color: #000 !important;
-        font-size: 9px !important; /* Smaller general font size for print */
+        font-size: 10px !important; /* General print font size */
     }
 
     /* Hide unnecessary UI elements */
@@ -1700,27 +1700,27 @@ tr:hover {
     }
 
     .detail-header {
-        margin-bottom: 6px !important;
-        padding-bottom: 4px !important;
+        margin-bottom: 8px !important;
+        padding-bottom: 6px !important;
         border-bottom: 1.5px solid #cbd5e1 !important;
     }
 
     .student-info h2 {
-        font-size: 1.25rem !important; /* Smaller name */
+        font-size: 1.4rem !important; /* Larger name for perfect layout */
         margin: 0 !important;
     }
 
     .student-overall-avg {
-        font-size: 1.15rem !important; /* Smaller score */
-        padding: 1px 8px !important;
-        border-radius: 5px !important;
+        font-size: 1.3rem !important; /* Larger score badge */
+        padding: 2px 10px !important;
+        border-radius: 6px !important;
         background-color: var(--secondary) !important;
         color: white !important;
     }
 
     .student-meta {
-        font-size: 0.7rem !important;
-        padding: 1px 5px !important;
+        font-size: 0.8rem !important;
+        padding: 2px 6px !important;
         margin-top: 1px !important;
     }
 
@@ -1732,15 +1732,15 @@ tr:hover {
     .detail-body {
         display: flex !important;
         flex-direction: column !important;
-        gap: 8px !important; /* Tight spacing between blocks */
-        padding-top: 4px !important;
+        gap: 12px !important; /* Elegant spacing between blocks */
+        padding-top: 6px !important;
     }
 
-    /* Compact Chart height */
+    /* Perfectly sized Chart height for A4 */
     .detail-chart {
-        height: 110px !important;
-        max-height: 110px !important;
-        margin-bottom: 4px !important;
+        height: 160px !important;
+        max-height: 160px !important;
+        margin-bottom: 8px !important;
         page-break-inside: avoid !important;
     }
 
@@ -1759,15 +1759,15 @@ tr:hover {
     }
 
     .detail-report h3 {
-        font-size: 0.8rem !important;
-        margin: 0 0 2px 0 !important;
+        font-size: 0.9rem !important;
+        margin: 0 0 4px 0 !important;
         color: var(--primary-light) !important;
     }
 
     .report-text {
-        font-size: 0.75rem !important;
-        line-height: 1.4 !important;
-        margin: 0 0 4px 0 !important;
+        font-size: 0.85rem !important;
+        line-height: 1.5 !important;
+        margin: 0 0 6px 0 !important;
     }
 
     /* Force details of grade table and notes into 2 columns */
@@ -1790,27 +1790,27 @@ tr:hover {
     }
 
     .student-grades-table h4, .student-notes h4 {
-        font-size: 0.75rem !important;
-        margin: 0 0 4px 0 !important;
+        font-size: 0.85rem !important;
+        margin: 0 0 6px 0 !important;
         color: var(--primary-light) !important;
     }
 
     /* Compress grades table cells */
     .student-grades-table table {
-        font-size: 0.7rem !important;
+        font-size: 0.8rem !important;
         box-shadow: none !important;
         border: 1px solid #cbd5e1 !important;
     }
 
     .student-grades-table th, .student-grades-table td {
-        padding: 3px 5px !important; /* Very narrow padding */
+        padding: 5px 6px !important; /* Better cell padding */
         border-bottom: 1px solid #cbd5e1 !important;
         border-left: 1px solid #cbd5e1 !important;
     }
 
     .grade-badge {
-        font-size: 0.65rem !important;
-        padding: 1px 5px !important;
+        font-size: 0.75rem !important;
+        padding: 2px 6px !important;
         border-radius: 6px !important;
     }
 
@@ -1821,11 +1821,11 @@ tr:hover {
 
     .print-only-note {
         display: block !important;
-        font-size: 0.7rem !important;
-        line-height: 1.4 !important;
+        font-size: 0.8rem !important;
+        line-height: 1.5 !important;
         color: #334155 !important;
         border-right: 3px solid var(--secondary) !important;
-        padding: 4px 6px !important;
+        padding: 6px 10px !important;
         margin-top: 0 !important;
         background: transparent !important;
         min-height: auto !important;
@@ -1835,16 +1835,16 @@ tr:hover {
     /* Layout competency tables in a 2-column grid to squeeze space! */
     .competency-tables-container {
         grid-column: span 2 !important;
-        margin-top: 6px !important;
+        margin-top: 8px !important;
         display: grid !important;
         grid-template-columns: repeat(2, 1fr) !important; /* TWO COLUMNS! */
-        gap: 8px !important;
+        gap: 10px !important;
         page-break-inside: avoid !important;
     }
 
     .stage-comp-table-wrapper {
         margin-top: 0 !important;
-        padding: 4px 6px !important;
+        padding: 6px 10px !important;
         border: 1px solid #cbd5e1 !important;
         border-radius: 5px !important;
         box-shadow: none !important;
@@ -1853,8 +1853,8 @@ tr:hover {
     }
 
     .stage-comp-table-wrapper h5 {
-        font-size: 0.7rem !important;
-        margin: 0 0 4px 0 !important;
+        font-size: 0.8rem !important;
+        margin: 0 0 6px 0 !important;
         padding-bottom: 2px !important;
         border-bottom: 1px solid #cbd5e1 !important;
     }
@@ -1865,12 +1865,12 @@ tr:hover {
 
     /* Compress competency table cells */
     .comp-table {
-        font-size: 0.65rem !important;
+        font-size: 0.75rem !important;
         min-width: auto !important;
     }
 
     .comp-table th, .comp-table td {
-        padding: 2px 3px !important;
+        padding: 3px 4px !important;
         border: 1px solid #cbd5e1 !important;
     }
 
