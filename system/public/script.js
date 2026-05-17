@@ -97,6 +97,23 @@ async function fetchData() {
         const elYear = document.getElementById('sidebarSchoolYear');
         if (elYear) elYear.textContent = db.schoolYear || "الموسم الدراسي";
 
+        // Render dynamic list of teachers by subject in the sidebar
+        const elTeachers = document.getElementById('sidebarTeachers');
+        if (elTeachers) {
+            elTeachers.innerHTML = "";
+            if (db.teachers && Object.keys(db.teachers).length > 0) {
+                Object.entries(db.teachers).forEach(([subject, name]) => {
+                    if (name) {
+                        const item = document.createElement('div');
+                        item.className = 'sidebar-teacher-item';
+                        item.innerHTML = `<i class="fas fa-chalkboard-teacher"></i> <span><strong>${subject}:</strong> ${name}</span>`;
+                        elTeachers.appendChild(item);
+                    }
+                });
+            }
+        }
+
+
     } catch (e) {
         console.error("Error fetching data:", e);
         showToast("خطأ في جلب البيانات", "error");
@@ -612,6 +629,27 @@ function showStudentDetail(id) {
     if (detMassar) detMassar.innerText = student.massarId;
     if (detLevel) detLevel.innerText = student.level || "";
 
+    // Populate official card header fields
+    const detSchoolName = document.getElementById('detSchoolName');
+    const detSchoolYear = document.getElementById('detSchoolYear');
+    const detClass = document.getElementById('detClass');
+    const detTeachers = document.getElementById('detTeachers');
+    
+    if (detSchoolName) detSchoolName.innerText = db.schoolName || "غير محدد";
+    if (detSchoolYear) detSchoolYear.innerText = db.schoolYear || "غير محدد";
+    if (detClass) detClass.innerText = student.class || "غير محدد";
+    
+    const studentTeachers = [];
+    Object.keys(student.grades).forEach(subj => {
+        if (db.teachers && db.teachers[subj]) {
+            studentTeachers.push(`${subj}: ${db.teachers[subj]}`);
+        }
+    });
+    if (detTeachers) {
+        detTeachers.innerText = studentTeachers.length > 0 ? studentTeachers.join(' | ') : "غير محدد";
+    }
+
+
     let totalSum = 0, totalCount = 0;
     Object.values(student.grades).forEach(subj => {
         Object.entries(subj).forEach(([key, val]) => {
@@ -970,6 +1008,7 @@ async function startImport() {
         });
         const results = await response.json();
         
+        let hasError = false;
         results.forEach(r => {
             const id = `file-${r.name.replace(/[^a-z0-9]/gi, '_')}`;
             const item = document.getElementById(id);
@@ -982,11 +1021,20 @@ async function startImport() {
                 fill.style.width = '100%';
                 if (r.status === 'success') fill.style.background = 'var(--success)';
                 else if (r.status === 'warning') fill.style.background = '#f59e0b';
-                else fill.style.background = 'var(--danger)';
+                else {
+                    fill.style.background = 'var(--danger)';
+                    hasError = true;
+                }
             }
         });
 
-        showToast("اكتملت عملية الاستيراد", "success");
+        if (hasError) {
+            showToast("بعض الملفات المرفوعة غير صالحة أو غير متوافقة!", "error");
+            openExcelGuideModal();
+        } else {
+            showToast("اكتملت عملية الاستيراد بنجاح", "success");
+        }
+
         await fetchData();
         populateFilters();
         applyFilters();
@@ -1143,5 +1191,16 @@ function printStudentCard() {
     window.print();
 }
 
+function openExcelGuideModal() {
+    const modal = document.getElementById('excelGuideModal');
+    if (modal) modal.classList.add('show');
+}
+
+function closeExcelGuideModal() {
+    const modal = document.getElementById('excelGuideModal');
+    if (modal) modal.classList.remove('show');
+}
+
 window.onload = init;
+
 

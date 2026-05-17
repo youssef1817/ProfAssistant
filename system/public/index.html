@@ -30,6 +30,7 @@
                 </button>
             </div>
             <div class="sidebar-footer">
+                <div id="sidebarTeachers" class="sidebar-teachers-list"></div>
                 <p id="sidebarSchoolName">المؤسسة التعليمية</p>
                 <small id="sidebarSchoolYear">الموسم الدراسي</small>
             </div>
@@ -109,6 +110,25 @@
                                     <span id="detMassar">G123456789</span>
                                     <span class="meta-divider">|</span>
                                     <span id="detLevel">المستوى</span>
+                                </div>
+                                <!-- Official Premium Header Block for both Web and Print -->
+                                <div class="official-card-header">
+                                    <div class="official-header-item">
+                                        <i class="fas fa-school"></i>
+                                        <strong>المؤسسة:</strong> <span id="detSchoolName">-</span>
+                                    </div>
+                                    <div class="official-header-item">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <strong>الموسم الدراسي:</strong> <span id="detSchoolYear">-</span>
+                                    </div>
+                                    <div class="official-header-item">
+                                        <i class="fas fa-chalkboard"></i>
+                                        <strong>القسم:</strong> <span id="detClass">-</span>
+                                    </div>
+                                    <div class="official-header-item teachers-block-item">
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                        <strong>الأساتذة:</strong> <span id="detTeachers">-</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="header-action-group">
@@ -274,6 +294,35 @@
             <i class="fas fa-sync-alt"></i>
             <span>مزامنة</span>
         </button>
+    </div>
+
+    <!-- Incompatible Excel File Modal Guide -->
+    <div id="excelGuideModal" class="custom-modal-overlay">
+        <div class="custom-modal-card guide-modal-card">
+            <div class="custom-modal-header danger-header">
+                <i class="fas fa-exclamation-triangle danger-icon"></i>
+                <h3>تنبيه: ملف إكسيل غير متوافق أو غير مدعوم!</h3>
+            </div>
+            <div class="custom-modal-body">
+                <p class="guide-intro">
+                    لقد قمت بتحميل ملف غير مطابق لهيكل مسار الرسمي. يرجى التأكد من استخراج ملفات نقط الكفايات بصيغتها الأصلية المتوافقة من <strong>منظومة مسار (Massar)</strong> كالتالي:
+                </p>
+                <div class="guide-image-container">
+                    <img src="/assets/export_guide.png" alt="دليل تصدير ملفات مسار" class="guide-screenshot">
+                </div>
+                <div class="guide-steps">
+                    <ol>
+                        <li>ادخل إلى حسابك في <strong>منظومة مسار (Massar)</strong>.</li>
+                        <li>توجه إلى قسم <strong>التقويم التكويني</strong> ⬅️ <strong>تصدير واستيراد نقط الكفايات</strong>.</li>
+                        <li>اختر المادة والمرحلة والقسم ثم اضغط على زر <strong>تصدير البيانات</strong> لتحميل ملف Excel الرسمي.</li>
+                        <li>قم بسحب وإسقاط الملف المُنزل مباشرة في هذا التطبيق دون إجراء أي تعديلات يدوية على هيكله أو تسمياته.</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="custom-modal-footer">
+                <button class="modal-btn-confirm" onclick="closeExcelGuideModal()">فهمت، سأقوم بالتصدير الصحيح</button>
+            </div>
+        </div>
     </div>
 
     <!-- Custom Glassmorphic Confirmation Modal -->

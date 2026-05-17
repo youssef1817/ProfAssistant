@@ -55,6 +55,7 @@ async function sync() {
         try {
             // Stage from Folder Name
             let stageNum = null;
+            let teacherName = "";
             const folderName = path.basename(path.dirname(filePath));
             const folderMatch = folderName.match(/\d/);
             if (folderMatch) stageNum = folderMatch[0];
@@ -78,6 +79,7 @@ async function sync() {
                     const cell = String(row[c] || "");
                     if (cell.includes("المستوى")) level = String(row[c+1] || "").trim();
                     if (cell.includes("المادة")) subject = String(row[c+1] || "").trim();
+                    if (cell.includes("الأستاذ") || cell.includes("المدرس")) teacherName = String(row[c+1] || "").trim();
                     if (cell.includes("المؤسسة")) schoolName = String(row[c+1] || "").trim();
                     if (cell.includes("السنة الدراسية") || cell.includes("الموسم الدراسي")) schoolYear = String(row[c+1] || "").trim();
                     if (cell.includes("المرحلة") && !stageNum) {
@@ -88,6 +90,7 @@ async function sync() {
                     if (cell.includes("المعدل")) avgCol = c;
                 }
             }
+
 
             // Header row for competencies (Row 22)
             const headerRow = data[22];
@@ -141,8 +144,11 @@ async function sync() {
                     studentsInFile++;
                 }
             }
+            if (!db.teachers) db.teachers = {};
+            if (teacherName && subject) db.teachers[subject] = teacherName;
             if (!db.subjects.includes(subject)) db.subjects.push(subject);
             console.log(`- ${fileName}: ${studentsInFile} students (Stage ${stageNum}, ${subject}) [AvgCol: ${avgCol}]`);
+
             
         } catch (e) {
             console.error(`Error processing ${fileName}:`, e.message);

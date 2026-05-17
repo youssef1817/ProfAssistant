@@ -1647,6 +1647,166 @@ tr:hover {
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
+/* Sidebar Dynamic Teacher Listing */
+.sidebar-teachers-list {
+    margin-bottom: 0.75rem;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+}
+
+.sidebar-teacher-item {
+    font-size: 0.75rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(37, 99, 235, 0.05);
+    padding: 6px 10px;
+    border-radius: 6px;
+    border-right: 3px solid var(--secondary);
+    white-space: normal;
+    line-height: 1.3;
+}
+
+.sidebar-teacher-item i {
+    color: var(--secondary);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+/* Card Official Institutional Header */
+.official-card-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    background: rgba(37, 99, 235, 0.03);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: var(--text);
+}
+
+.official-header-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.official-header-item i {
+    color: var(--secondary);
+    width: 14px;
+}
+
+.official-header-item strong {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.teachers-block-item {
+    flex-basis: 100%;
+    border-top: 1px dashed var(--border);
+    padding-top: 6px;
+    margin-top: 2px;
+}
+
+/* Print Overrides for Official Institutional Header */
+@media print {
+    .official-card-header {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important; /* 3 neat columns */
+        gap: 6px 12px !important;
+        background: transparent !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 6px !important;
+        padding: 6px 10px !important;
+        margin-top: 6px !important;
+        font-size: 0.75rem !important;
+    }
+
+    .teachers-block-item {
+        grid-column: span 3 !important; /* Spans all 3 columns below */
+        border-top: 1px dashed #cbd5e1 !important;
+        padding-top: 4px !important;
+        margin-top: 0 !important;
+    }
+}
+
+/* Excel Verification Modal Guide */
+.guide-modal-card {
+    max-width: 700px !important;
+    padding: 25px !important;
+}
+
+.danger-header .danger-icon {
+    font-size: 1.8rem;
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.guide-intro {
+    font-size: 0.95rem;
+    color: #475569;
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.guide-image-container {
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid var(--border);
+    margin-bottom: 15px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    background: #f8fafc;
+}
+
+.guide-screenshot {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.guide-screenshot:hover {
+    transform: scale(1.02);
+}
+
+.guide-steps {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 15px 25px 15px 15px;
+    margin-bottom: 15px;
+}
+
+.guide-steps ol {
+    margin: 0;
+    padding: 0 15px 0 0;
+    color: #334155;
+    font-size: 0.85rem;
+    line-height: 1.6;
+}
+
+.guide-steps li {
+    margin-bottom: 8px;
+}
+
+.guide-steps li:last-child {
+    margin-bottom: 0;
+}
+
 .print-only-note {
     display: none;
 }

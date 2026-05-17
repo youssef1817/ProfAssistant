@@ -17,6 +17,8 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use('/assets', express.static(path.join(__dirname, '..', 'assets')));
+
 
 const upload = multer({ dest: path.join(__dirname, '..', 'uploads/') });
 
@@ -75,6 +77,7 @@ app.post('/upload', upload.array('files'), async (req, res) => {
             let stageNum = null;
             let schoolName = "";
             let schoolYear = "";
+            let teacherName = "";
 
             // Search first 20 rows for metadata
             for (let r = 0; r < 20; r++) {
@@ -84,6 +87,7 @@ app.post('/upload', upload.array('files'), async (req, res) => {
                     const cell = String(row[c] || "");
                     if (cell.includes("المستوى")) level = String(row[c+1] || "").trim();
                     if (cell.includes("المادة")) subject = String(row[c+1] || "").trim();
+                    if (cell.includes("الأستاذ") || cell.includes("المدرس")) teacherName = String(row[c+1] || "").trim();
                     if (cell.includes("المؤسسة")) schoolName = String(row[c+1] || "").trim();
                     if (cell.includes("السنة الدراسية") || cell.includes("الموسم الدراسي")) schoolYear = String(row[c+1] || "").trim();
                     if (cell.includes("المرحلة") && !stageNum) {
@@ -96,6 +100,9 @@ app.post('/upload', upload.array('files'), async (req, res) => {
 
             if (schoolName) db.schoolName = schoolName;
             if (schoolYear) db.schoolYear = schoolYear;
+            if (!db.teachers) db.teachers = {};
+            if (teacherName && subject) db.teachers[subject] = teacherName;
+
 
 
             if (!stageNum || !subject) {
@@ -238,8 +245,9 @@ app.post('/wipe-data', async (req, res) => {
     console.log("Wiping all database records and repository files...");
     try {
         // 1. Reset database.json
-        const cleanDB = { students: {}, classes: {}, subjects: [], syncedFiles: [] };
+        const cleanDB = { students: {}, classes: {}, subjects: [], syncedFiles: [], teachers: {} };
         await fs.writeJson(DB_FILE, cleanDB, { spaces: 2 });
+
 
         // 2. Empty DATA_DIR (مستودع النقط) - delete all .xlsx files
         await ensureDataDir();
