@@ -4,7 +4,8 @@
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D%2016.0.0-brightgreen.svg)](https://nodejs.org/)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](#)
 
-An intelligent, elegant, and interactive web application designed to help Moroccan teachers manage, visualize, and analyze student grades exported from the **Massar** system. Built with local portability, high performance, and offline-first capabilities in mind, it provides beautiful charts and reports to share with parents during academic meetings.
+An intelligent, elegant, and interactive web application designed to help Moroccan teachers manage, visualize, and analyze student grades exported from the **Massar** system. This system is designed **exclusively for Pioneer Schools (المدارس الرائدة / Écoles Pionnières)** in Morocco, fully supporting their three core subjects: **Arabic, French, and Mathematics**. Built with local portability, high performance, and offline-first capabilities in mind, it provides beautiful charts and reports to share with parents during academic meetings.
+
 
 ---
 
@@ -13,7 +14,7 @@ An intelligent, elegant, and interactive web application designed to help Morocc
 - **📊 Dynamic Dashboard**: Stunning interactive charts (using Chart.js) that display class progress and student-specific grade evolutions across up to 5 stages.
 - **📁 Smart Excel Importer**: Drag-and-drop Massar Excel sheets (GrilleEvaluation) or entire directories. The system recursively scans, parses, and organizes files.
 - **📝 Automated Student Reports**: Instantly generates qualitative academic summaries and reports for each student based on their grades and competencies.
-- **⚡ Subject Toggle Group**: Instant multi-selection of subjects (Arabic, Mathematics, French) with real-time update of charts, summaries, and competency grids.
+- **⚡ Subject Toggle Group**: Instant multi-selection of the three core subjects (**Arabic, French, and Mathematics**) with real-time update of charts, summaries, and competency grids.
 - **🔍 Quick Live Search**: Predictive, immediate autocomplete search bar to jump to any student’s dossier in milliseconds.
 - **💾 Smart State Persistence**: Saves the current active student, class, and filters in `location.hash` so refreshing the page never loses your context.
 - **🛡️ Robust File Handling**: Specially designed copy-and-process algorithms for Windows to handle locked Excel files (e.g., when currently open in MS Excel) with elegant, non-blocking visual warnings.
