@@ -43,7 +43,7 @@
 ### 2. تثبيت المكتبات (للمرة الأولى فقط)
 قم بجلب المشروع ثم ادخل إلى مجلد الخادم لتثبيت المكتبات اللازمة:
 ```bash
-git clone https://github.com/YOUR_USERNAME/ProfAssistant.git
+git clone https://github.com/youssef1817/ProfAssistant.git
 cd ProfAssistant/system
 npm install
 ```
