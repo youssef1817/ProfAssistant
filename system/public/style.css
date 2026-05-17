@@ -1652,127 +1652,232 @@ tr:hover {
 }
 
 @media print {
-    /* Hide the sidebar, top header, page grid, filter controls and toast containers entirely */
+    /* Page margins configuration */
+    @page {
+        size: A4 portrait;
+        margin: 0.4cm 0.6cm;
+    }
+
+    body {
+        background: #fff !important;
+        color: #000 !important;
+        font-size: 9px !important; /* Smaller general font size for print */
+    }
+
+    /* Hide unnecessary UI elements */
     .sidebar, header, .stats-grid, .main-charts, .queued-files-container, 
     .filter-dashboard, #filterStatsBar, .toast-container, .table-container {
         display: none !important;
     }
     
-    /* Hide dashboard cards except studentDetail */
+    /* Make content full width */
+    .content {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
     .dashboard-grid {
         display: block !important;
+        width: 100% !important;
     }
     
     #emptyDashboardState {
         display: none !important;
     }
-    
-    /* Print layout for studentDetail */
+
+    /* Compress the main card container */
     #studentDetail {
         display: block !important;
-        position: absolute !important;
-        left: 0 !important;
-        top: 0 !important;
+        position: static !important;
         width: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
         box-shadow: none !important;
-        background: #fff !important;
-        color: #000 !important;
         border: none !important;
-        border-radius: 0 !important;
+        background: transparent !important;
     }
-    
-    /* Content spacing */
-    .content {
+
+    .detail-header {
+        margin-bottom: 6px !important;
+        padding-bottom: 4px !important;
+        border-bottom: 1.5px solid #cbd5e1 !important;
+    }
+
+    .student-info h2 {
+        font-size: 1.25rem !important; /* Smaller name */
         margin: 0 !important;
-        padding: 0 !important;
-        width: 100% !important;
     }
-    
-    body {
-        background: #fff !important;
-        color: #000 !important;
+
+    .student-overall-avg {
+        font-size: 1.15rem !important; /* Smaller score */
+        padding: 1px 8px !important;
+        border-radius: 5px !important;
+        background-color: var(--secondary) !important;
+        color: white !important;
     }
-    
-    /* Hide interactive elements inside studentDetail */
-    .btn-print, .close-btn, .btn-save-note, #studentNote {
+
+    .student-meta {
+        font-size: 0.7rem !important;
+        padding: 1px 5px !important;
+        margin-top: 1px !important;
+    }
+
+    .btn-print, .close-btn {
         display: none !important;
     }
-    
-    /* Make note appear beautifully in print */
-    .print-only-note {
-        display: block !important;
-        font-size: 0.95rem;
-        line-height: 1.6;
-        color: #1e293b;
-        background: #f8fafc !important;
-        border-right: 4px solid var(--secondary) !important;
-        padding: 12px 15px !important;
-        border-radius: 6px !important;
-        margin-top: 10px !important;
-        min-height: 40px;
-        white-space: pre-wrap;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-    
-    /* Force page adjusts to ensure graphs and colors are captured */
-    * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-    }
-    
-    /* Optimize detail body */
+
+    /* Detail body compression */
     .detail-body {
         display: flex !important;
         flex-direction: column !important;
-        gap: 20px !important;
-        padding-top: 15px !important;
+        gap: 8px !important; /* Tight spacing between blocks */
+        padding-top: 4px !important;
     }
-    
-    /* Restrict chart size for A4 printing */
+
+    /* Compact Chart height */
     .detail-chart {
-        height: 220px !important;
-        max-height: 220px !important;
+        height: 110px !important;
+        max-height: 110px !important;
+        margin-bottom: 4px !important;
         page-break-inside: avoid !important;
-        margin-bottom: 20px !important;
     }
-    
-    /* Optimize all competency tables for printing */
-    .comp-table {
-        font-size: 11px !important;
-        width: 100% !important;
-        border-collapse: collapse !important;
+
+    /* Use Grid to elegantly place Grades & Notes side-by-side without horizontal compression bugs! */
+    .detail-report {
+        display: grid !important;
+        grid-template-columns: 1.2fr 0.8fr !important; /* 2 columns: Grades on right (RTL), Notes on left */
+        gap: 12px !important;
+        background: transparent !important;
+        padding: 0 !important;
+        border: none !important;
     }
-    
-    .comp-table th, .comp-table td {
-        padding: 6px 4px !important;
-        border: 1px solid #94a3b8 !important;
-        text-align: center !important;
+
+    .detail-report h3, .report-text {
+        grid-column: span 2 !important;
     }
-    
-    .stage-comp-table-wrapper {
+
+    .detail-report h3 {
+        font-size: 0.8rem !important;
+        margin: 0 0 2px 0 !important;
+        color: var(--primary-light) !important;
+    }
+
+    .report-text {
+        font-size: 0.75rem !important;
+        line-height: 1.4 !important;
+        margin: 0 0 4px 0 !important;
+    }
+
+    /* Force details of grade table and notes into 2 columns */
+    .student-grades-table {
+        grid-column: 1 !important;
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+        border-top: none !important;
+    }
+
+    .student-notes {
+        grid-column: 2 !important;
+        margin-top: 0 !important;
+        padding: 6px 10px !important;
+        background: #f8fafc !important;
+        border-radius: 5px !important;
         border: 1px solid #cbd5e1 !important;
-        padding: 10px !important;
+        box-shadow: none !important;
         page-break-inside: avoid !important;
     }
-    
-    /* Keep sections together */
-    .student-notes, .student-grades-table, .competency-tables-container {
+
+    .student-grades-table h4, .student-notes h4 {
+        font-size: 0.75rem !important;
+        margin: 0 0 4px 0 !important;
+        color: var(--primary-light) !important;
+    }
+
+    /* Compress grades table cells */
+    .student-grades-table table {
+        font-size: 0.7rem !important;
+        box-shadow: none !important;
+        border: 1px solid #cbd5e1 !important;
+    }
+
+    .student-grades-table th, .student-grades-table td {
+        padding: 3px 5px !important; /* Very narrow padding */
+        border-bottom: 1px solid #cbd5e1 !important;
+        border-left: 1px solid #cbd5e1 !important;
+    }
+
+    .grade-badge {
+        font-size: 0.65rem !important;
+        padding: 1px 5px !important;
+        border-radius: 6px !important;
+    }
+
+    /* Note printing */
+    .btn-save-note, #studentNote {
+        display: none !important;
+    }
+
+    .print-only-note {
+        display: block !important;
+        font-size: 0.7rem !important;
+        line-height: 1.4 !important;
+        color: #334155 !important;
+        border-right: 3px solid var(--secondary) !important;
+        padding: 4px 6px !important;
+        margin-top: 0 !important;
+        background: transparent !important;
+        min-height: auto !important;
+        white-space: pre-wrap !important;
+    }
+
+    /* Layout competency tables in a 2-column grid to squeeze space! */
+    .competency-tables-container {
+        grid-column: span 2 !important;
+        margin-top: 6px !important;
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important; /* TWO COLUMNS! */
+        gap: 8px !important;
         page-break-inside: avoid !important;
     }
-    
-    /* School Name & Year size adjustments in print */
-    .student-info h2 {
-        font-size: 1.8rem !important;
+
+    .stage-comp-table-wrapper {
+        margin-top: 0 !important;
+        padding: 4px 6px !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 5px !important;
+        box-shadow: none !important;
+        background: #fff !important;
+        page-break-inside: avoid !important;
     }
-    
-    .student-overall-avg {
-        font-size: 1.6rem !important;
-        padding: 4px 15px !important;
-        background-color: var(--secondary) !important;
-        color: white !important;
+
+    .stage-comp-table-wrapper h5 {
+        font-size: 0.7rem !important;
+        margin: 0 0 4px 0 !important;
+        padding-bottom: 2px !important;
+        border-bottom: 1px solid #cbd5e1 !important;
+    }
+
+    .comp-table-scroll {
+        padding-bottom: 0 !important;
+    }
+
+    /* Compress competency table cells */
+    .comp-table {
+        font-size: 0.65rem !important;
+        min-width: auto !important;
+    }
+
+    .comp-table th, .comp-table td {
+        padding: 2px 3px !important;
+        border: 1px solid #cbd5e1 !important;
+    }
+
+    /* Ensure background colors are preserved */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
 }
 
