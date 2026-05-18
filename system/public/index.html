@@ -41,10 +41,16 @@
         <main class="content">
             <header>
                 <h1>مرحباً بك في منصة <span style="color: var(--secondary); font-family: 'Outfit', 'Tajawal', sans-serif; font-weight: 700;">ProfAssistant</span></h1>
-                <div class="search-bar">
-                    <input type="text" id="globalSearch" placeholder="بحث عن تلميذ..." onkeyup="applyFilters()" autocomplete="off">
-                    <i class="fas fa-search"></i>
-                    <div id="liveSearchResults" class="live-search-results"></div>
+                <div class="header-actions">
+                    <button class="btn-bulk-export" onclick="openBulkExportModal()">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>تصدير جماعي كـ PDF</span>
+                    </button>
+                    <div class="search-bar">
+                        <input type="text" id="globalSearch" placeholder="بحث عن تلميذ..." onkeyup="applyFilters()" autocomplete="off">
+                        <i class="fas fa-search"></i>
+                        <div id="liveSearchResults" class="live-search-results"></div>
+                    </div>
                 </div>
             </header>
 
@@ -321,6 +327,73 @@
             </div>
             <div class="custom-modal-footer">
                 <button class="modal-btn-confirm" onclick="closeExcelGuideModal()">فهمت، سأقوم بالتصدير الصحيح</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk PDF Export Modal -->
+    <div id="bulkExportModal" class="custom-modal-overlay">
+        <div class="custom-modal-card bulk-modal-card">
+            <div class="custom-modal-header primary-header">
+                <i class="fas fa-print primary-icon" style="font-size: 1.8rem; color: var(--secondary); background: rgba(37, 99, 235, 0.1); width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 12px;"></i>
+                <h3>التصدير الجماعي لبطاقات التلاميذ</h3>
+                <button class="close-modal-x" onclick="closeBulkExportModal()">&times;</button>
+            </div>
+            <div class="custom-modal-body" style="white-space: normal;">
+                <p class="bulk-intro">
+                    اختر الفئات التي ترغب في تصدير بطاقاتها المطبوعة. سيقوم النظام بإنشاء ملف PDF واحد يحتوي على بطاقة كل تلميذ محدد في صفحة مستقلة A4 جاهزة للتحميل والطباعة.
+                </p>
+                
+                <div class="bulk-filter-grid">
+                    <!-- Levels Section -->
+                    <div class="bulk-filter-section">
+                        <h4><i class="fas fa-layer-group"></i> المستويات الدراسية</h4>
+                        <div class="bulk-checkbox-group" id="bulkLevelsContainer">
+                            <!-- Injected dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Classes Section -->
+                    <div class="bulk-filter-section">
+                        <h4><i class="fas fa-users-rectangle"></i> الأقسام / الأفواج</h4>
+                        <div class="bulk-checkbox-group" id="bulkClassesContainer">
+                            <!-- Injected dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Subjects Section -->
+                    <div class="bulk-filter-section">
+                        <h4><i class="fas fa-book-open"></i> المواد المشمولة بالبطاقة</h4>
+                        <div class="bulk-checkbox-group" id="bulkSubjectsContainer">
+                            <!-- Injected dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Stages Section -->
+                    <div class="bulk-filter-section">
+                        <h4><i class="fas fa-calendar-alt"></i> المراحل الدراسية</h4>
+                        <div class="bulk-checkbox-group" id="bulkStagesContainer">
+                            <!-- Injected dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Preview / Summary Card -->
+                <div class="bulk-summary-card">
+                    <div class="summary-stat">
+                        <span class="stat-num" id="bulkStudentCount">0</span>
+                        <span class="stat-label">تلميذاً سيتم تصديرهم</span>
+                    </div>
+                    <div class="summary-list-preview" id="bulkStudentListPreview">
+                        <!-- Preview names of matching students -->
+                    </div>
+                </div>
+            </div>
+            <div class="custom-modal-footer">
+                <button class="modal-btn-cancel" onclick="closeBulkExportModal()">إلغاء</button>
+                <button class="modal-btn-confirm bulk-export-btn" id="startBulkExportBtn" onclick="runBulkExport()">
+                    <i class="fas fa-file-pdf"></i> بدء تصدير الـ PDF الجماعي
+                </button>
             </div>
         </div>
     </div>

@@ -1201,6 +1201,450 @@ function closeExcelGuideModal() {
     if (modal) modal.classList.remove('show');
 }
 
+let selectedBulkLevels = [];
+let selectedBulkClasses = [];
+let selectedBulkSubjects = [];
+let selectedBulkStages = [];
+
+function openBulkExportModal() {
+    const modal = document.getElementById('bulkExportModal');
+    if (!modal) return;
+    
+    // Extract unique levels and classes
+    const uniqueLevels = [...new Set(Object.values(db.students).map(s => s.level).filter(Boolean))].sort();
+    const uniqueClasses = [...new Set(Object.values(db.students).map(s => s.class).filter(Boolean))].sort();
+    const uniqueSubjects = db.subjects || ['الرياضيات', 'اللغة الفرنسية', 'اللغة العربية'];
+    const uniqueStages = ['المرحلة 1', 'المرحلة 2', 'المرحلة 3', 'المرحلة 4', 'المرحلة 5'];
+    
+    // Initialize selected arrays with all options by default
+    selectedBulkLevels = [...uniqueLevels];
+    selectedBulkClasses = [...uniqueClasses];
+    selectedBulkSubjects = [...uniqueSubjects];
+    selectedBulkStages = ['stage1', 'stage2', 'stage3', 'stage4', 'stage5']; // Map to database stage keys
+    
+    // Populate Levels
+    const levelsContainer = document.getElementById('bulkLevelsContainer');
+    if (levelsContainer) {
+        levelsContainer.innerHTML = uniqueLevels.map(lvl => `
+            <label class="bulk-cb-label">
+                <input type="checkbox" checked value="${lvl}" onchange="updateBulkSelections('level', this)">
+                <span>${lvl}</span>
+            </label>
+        `).join('');
+    }
+    
+    // Populate Classes
+    const classesContainer = document.getElementById('bulkClassesContainer');
+    if (classesContainer) {
+        classesContainer.innerHTML = uniqueClasses.map(cls => `
+            <label class="bulk-cb-label">
+                <input type="checkbox" checked value="${cls}" onchange="updateBulkSelections('class', this)">
+                <span>${cls}</span>
+            </label>
+        `).join('');
+    }
+
+    // Populate Subjects
+    const subjectsContainer = document.getElementById('bulkSubjectsContainer');
+    if (subjectsContainer) {
+        subjectsContainer.innerHTML = uniqueSubjects.map(subj => `
+            <label class="bulk-cb-label">
+                <input type="checkbox" checked value="${subj}" onchange="updateBulkSelections('subject', this)">
+                <span>${subj}</span>
+            </label>
+        `).join('');
+    }
+
+    // Populate Stages
+    const stagesContainer = document.getElementById('bulkStagesContainer');
+    if (stagesContainer) {
+        stagesContainer.innerHTML = uniqueStages.map((st, idx) => `
+            <label class="bulk-cb-label">
+                <input type="checkbox" checked value="stage${idx+1}" onchange="updateBulkSelections('stage', this)">
+                <span>${st}</span>
+            </label>
+        `).join('');
+    }
+    
+    modal.classList.add('show');
+    calculateBulkCount();
+}
+
+function updateBulkSelections(type, checkbox) {
+    const val = checkbox.value;
+    if (type === 'level') {
+        if (checkbox.checked) {
+            if (!selectedBulkLevels.includes(val)) selectedBulkLevels.push(val);
+        } else {
+            selectedBulkLevels = selectedBulkLevels.filter(x => x !== val);
+        }
+    } else if (type === 'class') {
+        if (checkbox.checked) {
+            if (!selectedBulkClasses.includes(val)) selectedBulkClasses.push(val);
+        } else {
+            selectedBulkClasses = selectedBulkClasses.filter(x => x !== val);
+        }
+    } else if (type === 'subject') {
+        if (checkbox.checked) {
+            if (!selectedBulkSubjects.includes(val)) selectedBulkSubjects.push(val);
+        } else {
+            selectedBulkSubjects = selectedBulkSubjects.filter(x => x !== val);
+        }
+    } else if (type === 'stage') {
+        if (checkbox.checked) {
+            if (!selectedBulkStages.includes(val)) selectedBulkStages.push(val);
+        } else {
+            selectedBulkStages = selectedBulkStages.filter(x => x !== val);
+        }
+    }
+    calculateBulkCount();
+}
+
+function calculateBulkCount() {
+    const matchingStudents = Object.values(db.students).filter(student => {
+        const matchesLevel = selectedBulkLevels.includes(student.level);
+        const matchesClass = selectedBulkClasses.includes(student.class);
+        return matchesLevel && matchesClass;
+    });
+    
+    const countEl = document.getElementById('bulkStudentCount');
+    if (countEl) countEl.innerText = matchingStudents.length;
+    
+    const previewEl = document.getElementById('bulkStudentListPreview');
+    if (previewEl) {
+        if (matchingStudents.length === 0) {
+            previewEl.innerHTML = '<span class="no-students">لا يوجد تلاميذ مطابقين للخيارات المحددة</span>';
+            const btn = document.getElementById('startBulkExportBtn');
+            if (btn) btn.disabled = true;
+        } else {
+            const btn = document.getElementById('startBulkExportBtn');
+            if (btn) btn.disabled = false;
+            previewEl.innerHTML = matchingStudents.map(s => `
+                <span class="preview-student-chip">${s.name} <small>(${s.class})</small></span>
+            `).join('');
+        }
+    }
+}
+
+function closeBulkExportModal() {
+    const modal = document.getElementById('bulkExportModal');
+    if (modal) modal.classList.remove('show');
+}
+
+async function runBulkExport() {
+    const matchingStudents = Object.values(db.students).filter(student => {
+        const matchesLevel = selectedBulkLevels.includes(student.level);
+        const matchesClass = selectedBulkClasses.includes(student.class);
+        return matchesLevel && matchesClass;
+    });
+
+    if (matchingStudents.length === 0) {
+        showToast("لا يوجد تلاميذ مطابقين للتصدير!", "error");
+        return;
+    }
+
+    // Hide the bulk modal first
+    closeBulkExportModal();
+    
+    showToast("جاري تحضير " + matchingStudents.length + " بطاقة تلميذ للتصدير...", "info");
+
+    // Remove any existing print container
+    const oldContainer = document.getElementById('bulkPrintContainer');
+    if (oldContainer) oldContainer.remove();
+
+    // Create the container
+    const bulkPrintContainer = document.createElement('div');
+    bulkPrintContainer.id = 'bulkPrintContainer';
+    document.body.appendChild(bulkPrintContainer);
+
+    // Set bulk print body class
+    document.body.classList.add('bulk-printing-active');
+
+    // Populate all student cards
+    matchingStudents.forEach(student => {
+        const cardHtml = generateStudentPrintCardHTML(student, selectedBulkSubjects, selectedBulkStages);
+        const cardWrapper = document.createElement('div');
+        cardWrapper.innerHTML = cardHtml;
+        bulkPrintContainer.appendChild(cardWrapper.firstElementChild);
+    });
+
+    // We must now render a Chart for EACH student card!
+    const chartPromises = matchingStudents.map(student => {
+        return new Promise((resolve) => {
+            const canvas = document.getElementById(`canvas-${student.massarId}`);
+            if (!canvas) {
+                resolve();
+                return;
+            }
+
+            const ctx = canvas.getContext('2d');
+            // Stages ordered chronologically mapping to actual keys in DB
+            const stages = selectedBulkStages;
+            const studentData = stages.map(stage => {
+                if (selectedBulkSubjects.length > 0) {
+                    let sum = 0, count = 0;
+                    selectedBulkSubjects.forEach(subj => {
+                        const val = student.grades[subj]?.[stage];
+                        if (val !== undefined && val !== null && val !== "") {
+                            sum += parseFloat(val);
+                            count++;
+                        }
+                    });
+                    return count > 0 ? (sum / count).toFixed(2) : null;
+                }
+                return null;
+            });
+
+            // Point colors based on improvement
+            let pointColors = [];
+            let lastVal = null;
+            studentData.forEach(val => {
+                if (val === null) {
+                    pointColors.push('#94a3b8');
+                } else {
+                    const current = parseFloat(val);
+                    if (lastVal === null) pointColors.push('#2563eb');
+                    else if (current > lastVal) pointColors.push('#10b981');
+                    else if (current < lastVal) pointColors.push('#ef4444');
+                    else pointColors.push('#f59e0b');
+                    lastVal = current;
+                }
+            });
+
+            const chartLabel = selectedBulkSubjects.length === 1 ? selectedBulkSubjects[0] : `المعدل (${selectedBulkSubjects.length} مواد)`;
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: stages.map(st => `م ${st.replace('stage', '')}`),
+                    datasets: [{
+                        label: chartLabel,
+                        data: studentData,
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: pointColors,
+                        pointBorderColor: pointColors,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        spanGaps: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 0 // Disable animation so charts render INSTANTLY!
+                    },
+                    plugins: { legend: { display: true } },
+                    scales: {
+                        y: { min: 0, max: 10 },
+                        x: { ticks: { font: { family: 'Tajawal' } } }
+                    }
+                }
+            });
+            
+            resolve();
+        });
+    });
+
+    await Promise.all(chartPromises);
+
+    // Wait for DOM to completely flush rendering, then trigger print
+    setTimeout(() => {
+        window.print();
+        document.body.classList.remove('bulk-printing-active');
+        const container = document.getElementById('bulkPrintContainer');
+        if (container) container.remove();
+    }, 800);
+}
+
+function generateStudentPrintCardHTML(student, matchingSubjects, matchingStages) {
+    const studentTeachers = [];
+    matchingSubjects.forEach(subj => {
+        if (db.teachers && db.teachers[subj]) {
+            studentTeachers.push(`${subj}: ${db.teachers[subj]}`);
+        }
+    });
+    const teachersStr = studentTeachers.length > 0 ? studentTeachers.join(' | ') : "غير محدد";
+
+    // Overall Average calculation
+    let totalSum = 0, totalCount = 0;
+    matchingSubjects.forEach(subj => {
+        if (student.grades[subj]) {
+            matchingStages.forEach(stage => {
+                const val = student.grades[subj][stage];
+                if (val !== undefined && val !== null && val !== "") {
+                    totalSum += parseFloat(val);
+                    totalCount++;
+                }
+            });
+        }
+    });
+    const overallAvg = totalCount > 0 ? (totalSum / totalCount).toFixed(2) : "-";
+    let avgClass = 'student-overall-avg';
+    if (overallAvg !== "-") {
+        const num = parseFloat(overallAvg);
+        if (num < 5) avgClass += ' grade-red';
+        else if (num < 7.5) avgClass += ' grade-orange';
+        else avgClass += ' grade-green';
+    }
+
+    // Grades Table Rows
+    let tableRows = '';
+    matchingSubjects.forEach(subj => {
+        if (student.grades[subj]) {
+            let rowHtml = `<tr><td>${subj}</td>`;
+            matchingStages.forEach(stage => {
+                rowHtml += `<td>${getGradeBadge(student.grades[subj][stage])}</td>`;
+            });
+            rowHtml += `</tr>`;
+            tableRows += rowHtml;
+        }
+    });
+
+    // Report content
+    let report = `التلميذ(ة) ${student.name} يظهر `;
+    if (overallAvg !== "-") {
+        const num = parseFloat(overallAvg);
+        if (num >= 8) report += "مستوى ممتازاً جداً.";
+        else if (num >= 6) report += "مستوى جيداً ومستقراً.";
+        else if (num >= 5) report += "مستوى متوسطاً.";
+        else report += "تعثراً واضحاً في التحصيل الدراسي.";
+    } else {
+        report += "لا توجد نتائج مسجلة لهذه الفئات.";
+    }
+
+    // Competency Tables HTML
+    let competencyTablesHTML = '';
+    matchingStages.forEach(stage => {
+        const stageNumStr = stage.replace('stage', '');
+        matchingSubjects.forEach(currentSubject => {
+            const details = student.grades[currentSubject]?.[`${stage}_detail`];
+            if (details && Object.keys(details).length > 0) {
+                let compRows = '';
+                Object.entries(details).forEach(([comp, val]) => {
+                    const statusClass = val === '1' ? 'mastered' : (val === '2' ? 'in-progress' : 'not-mastered');
+                    const statusText = val === '1' ? 'متحكم' : (val === '2' ? 'في طور التحكم' : 'غير متحكم');
+                    compRows += `
+                        <tr>
+                            <td>${comp}</td>
+                            <td class="status-cell ${statusClass}">${statusText}</td>
+                        </tr>
+                    `;
+                });
+                
+                competencyTablesHTML += `
+                    <div class="stage-comp-table-wrapper" style="margin-top: 10px;">
+                        <div class="comp-table-header">
+                            <span class="comp-stage"><i class="fas fa-calendar-day"></i> المرحلة ${stageNumStr}</span>
+                            <span class="comp-subject"><i class="fas fa-book"></i> ${currentSubject}</span>
+                        </div>
+                        <table class="comp-table">
+                            <thead>
+                                <tr>
+                                    <th>الكفاية / المهارة المستهدفة</th>
+                                    <th style="width: 130px;">درجة التحكم</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${compRows}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+        });
+    });
+
+    return `
+        <div class="bulk-print-page student-detail-card" style="margin-bottom: 2rem; page-break-after: always; break-after: page;">
+            <div class="detail-header" style="border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
+                <div class="student-info" style="width: 100%;">
+                    <div class="student-name-row" style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 4px;">
+                        <h2 style="display: flex; align-items: center; gap: 10px; margin: 0; color: var(--secondary); font-size: 1.4rem;">
+                            <i class="fas fa-user-graduate" style="color: var(--primary-light);"></i> 
+                            <span>${student.name}</span>
+                        </h2>
+                        <span class="${avgClass}" style="font-size: 1.3rem; font-weight: 700; padding: 2px 12px; border-radius: 8px; color: white;">${overallAvg}</span>
+                    </div>
+                    <div class="student-meta" style="font-size: 0.8rem; margin-bottom: 6px; display: inline-flex; gap: 10px; background: var(--bg); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border);">
+                        <span>${student.massarId}</span>
+                        <span class="meta-divider" style="color: var(--border);">|</span>
+                        <span>${student.level || ""}</span>
+                    </div>
+                    <div class="official-card-header">
+                        <div class="official-header-item">
+                            <i class="fas fa-school"></i>
+                            <strong>المؤسسة:</strong> <span>${db.schoolName || "غير محدد"}</span>
+                        </div>
+                        <div class="official-header-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <strong>الموسم الدراسي:</strong> <span>${db.schoolYear || "غير محدد"}</span>
+                        </div>
+                        <div class="official-header-item">
+                            <i class="fas fa-chalkboard"></i>
+                            <strong>القسم:</strong> <span>${student.class || "غير محدد"}</span>
+                        </div>
+                        <div class="official-header-item teachers-block-item">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <strong>الأساتذة:</strong> <span>${teachersStr}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-body" style="display: grid; grid-template-columns: 280px 1fr; gap: 20px;">
+                <div class="detail-chart" style="height: 180px;">
+                    <canvas id="canvas-${student.massarId}" style="width: 100%; height: 180px;"></canvas>
+                </div>
+                <div class="detail-report">
+                    <h3 style="font-size: 1rem; margin-bottom: 6px; color: var(--primary);">تقرير المستوى الدراسي</h3>
+                    <div class="report-text" style="font-size: 0.85rem; padding: 6px 10px; margin-bottom: 8px; line-height: 1.5; background: var(--bg); border-radius: 6px;">
+                        ${report}
+                    </div>
+                    
+                    <div class="student-grades-table">
+                        <h4 style="font-size: 0.9rem; margin-bottom: 4px; color: var(--primary);">جدول النقط التفصيلي</h4>
+                        <table style="width: 100%; font-size: 0.8rem; border-collapse: collapse;">
+                            <thead>
+                                <tr>
+                                    <th>المادة</th>
+                                    ${matchingStages.map(st => `<th>م${st.replace('stage', '')}</th>`).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${tableRows}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="student-notes" style="margin-top: 8px; padding: 6px; border: 1px dashed var(--border); border-radius: 6px;">
+                        <h4 style="font-size: 0.85rem; margin-bottom: 4px; color: var(--primary);">ملاحظات الأستاذ (للقاء الآباء)</h4>
+                        <div style="font-size: 0.85rem; color: #334155; min-height: 25px; line-height: 1.4; white-space: pre-wrap;">
+                            ${student.note?.trim() || "لا توجد ملاحظات خاصة."}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Competency tables printed below -->
+            <div class="competency-tables-container" style="margin-top: 10px;">
+                ${competencyTablesHTML}
+            </div>
+        </div>
+    `;
+}
+
+// Add afterprint listener
+window.addEventListener('afterprint', () => {
+    document.body.classList.remove('bulk-printing-active');
+    const container = document.getElementById('bulkPrintContainer');
+    if (container) container.remove();
+});
+
 window.onload = init;
+
 
 

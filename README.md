@@ -1,4 +1,4 @@
-# 🎓 ProfAssistant (NotesEleves) - Système Intelligent de Suivi Scolaire
+# 🎓 ProfAssistant - Système Intelligent de Suivi Scolaire
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D%2016.0.0-brightgreen.svg)](https://nodejs.org/)
