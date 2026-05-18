@@ -20,10 +20,12 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use('/assets', express.static(path.join(__dirname, '..', 'assets')));
 
 
-const upload = multer({ dest: path.join(__dirname, '..', 'uploads/') });
+const UPLOADS_DIR = process.env.APP_DATA_DIR ? path.join(process.env.APP_DATA_DIR, 'uploads') : path.join(__dirname, '..', 'uploads/');
+fs.ensureDirSync(UPLOADS_DIR);
+const upload = multer({ dest: UPLOADS_DIR });
 
-const DATA_DIR = path.join(__dirname, '..', '..', 'مستودع النقط');
-const DB_FILE = path.join(__dirname, '..', 'database.json');
+const DATA_DIR = process.env.EXCEL_REPOSITORY_DIR || path.join(__dirname, '..', '..', 'مستودع النقط');
+const DB_FILE = process.env.APP_DATA_DIR ? path.join(process.env.APP_DATA_DIR, 'database.json') : path.join(__dirname, '..', 'database.json');
 
 // Ensure directory exists and configure custom sync icon
 async function ensureDataDir() {

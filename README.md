@@ -98,6 +98,32 @@ Les fichiers cibles sont les grilles d'évaluation exportées depuis le système
 
 ---
 
+## 🖥️ Application Bureau Autonome (Desktop App)
+
+Le projet supporte désormais pleinement la conversion en une application de bureau Windows autonome et professionnelle, fonctionnant d'un simple double-clic sans avoir à ouvrir de serveurs en arrière-plan ni de navigateur web !
+
+### 📥 Fonctionnalités de la Version Bureau :
+- **Lancement instantané** : Fenêtre d'application indépendante s'affichant avec son icône officielle dans la barre des tâches Windows.
+- **Sauvegarde automatique sécurisée** : La base de données est stockée en toute sécurité dans le répertoire utilisateur Windows (`AppData/Roaming/ProfAssistant`).
+- **Dossier de documents organisé** : Le dossier **مستودع النقط (Dépôt des Notes)** est automatiquement géré dans vos Documents Windows : `Documents/ProfAssistant/مستودع النقط`.
+- **Migration intelligente des données** : Lors du premier lancement, l'application détecte et migre automatiquement vos données précédentes de `system/database.json` pour garantir **aucune perte de données** !
+
+### 🔨 Compiler l'Application (.exe) :
+Si vous souhaitez compiler vous-même les fichiers d'installation :
+1. Accédez au répertoire `system` :
+   ```bash
+   cd system
+   ```
+2. Générez l'installateur et la version portable en une seule commande :
+   ```bash
+   npm run dist
+   ```
+3. Retrouvez vos exécutables Windows prêts dans le dossier `system/dist/` :
+   - **`ProfAssistant Setup 1.0.0.exe`** : Installateur officiel avec raccourcis de bureau.
+   - **`ProfAssistant 1.0.0.exe`** : Version portable (sans installation), idéale pour une clé USB afin de travailler sur n'importe quel ordinateur d'école !
+
+---
+
 ## 🤝 Contribution
 
 Les contributions de la part d'enseignants, de développeurs et de designers sont les bienvenues !

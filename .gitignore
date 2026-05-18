@@ -2,6 +2,9 @@
 node_modules/
 system/node_modules/
 
+# Electron build output
+system/dist/
+
 # Local databases and secrets
 system/database.json
 system/database_backup.json

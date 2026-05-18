@@ -1,13 +1,16 @@
 {
-  "name": "noteseleves",
+  "name": "ProfAssistant",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "منصة ProfAssistant - التتبع والتحليل الذكي لنقط التلاميذ",
+  "main": "main.js",
   "scripts": {
+    "start": "electron main.js",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "ProfAssistant team",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
@@ -20,6 +23,40 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "electron": "^42.1.0",
+    "electron-builder": "^26.8.1",
     "png-to-ico": "^3.0.1"
+  },
+  "build": {
+    "appId": "com.profassistant.app",
+    "productName": "ProfAssistant",
+    "asar": false,
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "signAndEditExecutable": false,
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "shortcutName": "ProfAssistant",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
   }
 }
