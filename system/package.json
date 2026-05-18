@@ -35,7 +35,8 @@
       "output": "dist"
     },
     "win": {
-      "signAndEditExecutable": false,
+      "icon": "assets/icon.ico",
+      "signAndEditExecutable": true,
       "target": [
         {
           "target": "nsis",
@@ -55,8 +56,16 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "shortcutName": "ProfAssistant",
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico",
+      "uninstallDisplayName": "ProfAssistant",
+      "deleteAppDataOnUninstall": false,
+      "runAfterFinish": true
+    },
+    "portable": {
+      "splashImage": "assets/app_icon_real.png"
     }
   }
 }

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة ProfAssistant - تهيئة التطبيق</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            color: #1e293b;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            width: 90%;
+            max-width: 460px;
+            padding: 50px 40px;
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
+            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .logo-wrapper {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Beautiful Branded Graduation Cap Icon */
+        .brand-icon {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-radius: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            animation: pulse-icon 2s infinite alternate;
+        }
+
+        .brand-icon svg {
+            width: 50px;
+            height: 50px;
+            fill: url(#grad);
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        p {
+            font-size: 15px;
+            color: #64748b;
+            line-height: 1.7;
+            font-weight: 600;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            margin-top: 35px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 40%;
+            background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
+            border-radius: 10px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            animation: progressAnim 1.6s infinite ease-in-out;
+        }
+
+        @keyframes progressAnim {
+            0% { left: -40%; }
+            100% { left: 100%; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse-icon {
+            0% { transform: scale(1); box-shadow: 0 10px 25px rgba(59, 130, 246, 0.12); }
+            100% { transform: scale(1.05); box-shadow: 0 15px 35px rgba(59, 130, 246, 0.2); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- SVG Definitions for Color Gradient -->
+        <svg style="width:0; height:0; position:absolute;">
+            <defs>
+                <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#2563eb;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#4f46e5;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+        </svg>
+
+        <div class="logo-wrapper">
+            <div class="brand-icon">
+                <!-- Gorgeous Graduation Cap SVG icon -->
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3L1 9L12 15L21 10.09V17H23V9L12 3M5 13.18V17.18L12 21L19 17.18V13.18L12 17L5 13.18Z" />
+                </svg>
+            </div>
+        </div>
+
+        <h1>منصة ProfAssistant</h1>
+        <p>جاري تهيئة المنصة وتحضير لوحة تتبع تلاميذك...</p>
+        <p style="font-size: 13px; font-weight: 400; margin-top: 4px; color: #94a3b8;">يرجى الانتظار لحظة، يتم الفحص والتحضير محلياً وآمناً بالكامل.</p>
+        
+        <div class="progress-track">
+            <div class="progress-bar"></div>
+        </div>
+    </div>
+</body>
+</html>

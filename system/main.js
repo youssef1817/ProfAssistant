@@ -2,6 +2,7 @@ const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const { spawn } = require('child_process');
 const fs = require('fs');
+const net = require('net');
 
 let mainWindow;
 let serverProcess;
@@ -52,6 +53,16 @@ function startServer() {
     });
 }
 
+function checkServerReady(port, callback) {
+    const client = net.connect({ port }, () => {
+        client.end();
+        callback(true);
+    });
+    client.on('error', () => {
+        setTimeout(() => checkServerReady(port, callback), 50); // Poll every 50ms
+    });
+}
+
 function createWindow() {
     mainWindow = new BrowserWindow({
         width: 1300,
@@ -67,10 +78,15 @@ function createWindow() {
     // Remove menu bar
     mainWindow.setMenuBarVisibility(false);
 
-    // Wait for the Express server to boot up, then load the home URL
-    setTimeout(() => {
-        mainWindow.loadURL('http://localhost:3000');
-    }, 1800);
+    // Load the beautiful styled loading screen immediately
+    mainWindow.loadFile(path.join(__dirname, 'public', 'loading.html'));
+
+    // Probe the server port and load URL immediately when ready
+    checkServerReady(3000, () => {
+        if (mainWindow) {
+            mainWindow.loadURL('http://localhost:3000');
+        }
+    });
 
     mainWindow.on('closed', () => {
         mainWindow = null;
