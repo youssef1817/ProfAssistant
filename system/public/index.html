@@ -147,8 +147,16 @@
 
                         </div>
                         <div class="detail-body">
-                            <div class="detail-chart">
-                                <canvas id="studentChart"></canvas>
+                            <div class="detail-right-column">
+                                <div class="detail-chart">
+                                    <canvas id="studentChart"></canvas>
+                                </div>
+                                <div class="student-notes">
+                                    <h4>ملاحظات الأستاذ (للقاء الآباء)</h4>
+                                    <textarea id="studentNote" placeholder="اكتب هنا توجيهات خاصة للتلميذ أو ملاحظات للأب..."></textarea>
+                                    <div id="printNoteContent" class="print-only-note"></div>
+                                    <button class="btn-save-note" onclick="saveNote()">حفظ الملاحظة</button>
+                                </div>
                             </div>
                             <div class="detail-report">
                                 <h3>تقرير المستوى الدراسي</h3>
@@ -170,12 +178,6 @@
                                         </thead>
                                         <tbody></tbody>
                                     </table>
-                                </div>
-                                <div class="student-notes">
-                                    <h4>ملاحظات الأستاذ (للقاء الآباء)</h4>
-                                    <textarea id="studentNote" placeholder="اكتب هنا توجيهات خاصة للتلميذ أو ملاحظات للأب..."></textarea>
-                                    <div id="printNoteContent" class="print-only-note"></div>
-                                    <button class="btn-save-note" onclick="saveNote()">حفظ الملاحظة</button>
                                 </div>
 
                                 <div id="competencyTablesContainer" class="competency-tables-container">

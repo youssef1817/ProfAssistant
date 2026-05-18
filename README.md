@@ -77,7 +77,7 @@ Double-cliquez simplement sur le fichier `boot.bat` situé dans le dossier `syst
 
 ### 📥 Fichiers Excel Supportés & Comment les Exporter
 Les fichiers cibles sont les grilles d'évaluation exportées depuis le système **Massar** en suivant ce chemin :
-**ملف الكفايات (Carnet des compétences)** → **تصدير مستويات التحكم (Exporter les niveaux de maîtrise)**
+**ملف الكفايات (Livret des compétences)** → **تصدير مستويات التحكم (Export des niveaux de maîtrise)**
 
 ![Comment exporter les fichiers Excel depuis Massar](system/assets/export_guide.png)
 

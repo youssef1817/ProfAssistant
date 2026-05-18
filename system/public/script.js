@@ -787,19 +787,20 @@ function showStudentDetail(id) {
     const compContainer = document.getElementById('competencyTablesContainer');
     if (compContainer) {
         compContainer.innerHTML = '';
+        const subjectsToRender = activeSubjects.length > 0 ? activeSubjects : (db.subjects || ['الرياضيات', 'اللغة الفرنسية', 'اللغة العربية']);
+        
         stages.forEach((stage, idx) => {
-            const subjectsToRender = activeSubjects.length > 0 ? activeSubjects : Object.keys(student.grades);
+            const stageNumStr = stage.replace('stage', '');
             
             subjectsToRender.forEach(currentSubject => {
                 const details = student.grades[currentSubject]?.[`${stage}_detail`];
-                
                 if (details && Object.keys(details).length > 0) {
                     const wrapper = document.createElement('div');
                     wrapper.className = 'stage-comp-table-wrapper';
                     wrapper.style.marginTop = '15px';
                     
                     const title = document.createElement('h5');
-                    title.innerText = `تفاصيل كفايات المرحلة ${idx + 1} (${currentSubject})`;
+                    title.innerText = `تفاصيل كفايات المرحلة ${stageNumStr} (${currentSubject})`;
                     wrapper.appendChild(title);
 
                     const scroll = document.createElement('div');
@@ -807,36 +808,37 @@ function showStudentDetail(id) {
 
                     const table = document.createElement('table');
                     table.className = 'comp-table';
+                    table.style.width = '100%';
+                    table.style.fontSize = '0.8rem';
+                    table.style.borderCollapse = 'collapse';
+                    table.style.textAlign = 'center';
                     
-                    const thead = document.createElement('tr');
-                    const tbody = document.createElement('tr');
-                    
+                    let ths = '';
+                    let tds = '';
                     Object.entries(details).forEach(([comp, val]) => {
-                        const th = document.createElement('th');
-                        th.innerText = comp;
-                        thead.appendChild(th);
-                        
-                        const td = document.createElement('td');
-                        td.innerText = val;
-                        tbody.appendChild(td);
+                        ths += `<th>${comp}</th>`;
+                        tds += `<td>${val}</td>`;
                     });
-
-                    // Add Average Column
-                    const thAvg = document.createElement('th');
-                    thAvg.innerText = 'المعدل';
-                    thAvg.style.backgroundColor = '#f1f5f9';
-                    thead.appendChild(thAvg);
-
-                    const tdAvg = document.createElement('td');
+                    
+                    // Add Average Column at the end
+                    ths += `<th style="background-color: #f1f5f9;">المعدل</th>`;
                     const avgVal = student.grades[currentSubject]?.[stage];
-                    tdAvg.innerText = avgVal !== undefined ? avgVal : "-";
-                    tdAvg.style.fontWeight = '800';
-                    tdAvg.style.color = 'var(--secondary)';
-                    tdAvg.style.backgroundColor = '#f8fafc';
-                    tbody.appendChild(tdAvg);
-
-                    table.appendChild(thead);
-                    table.appendChild(tbody);
+                    const avgStr = avgVal !== undefined && avgVal !== null && avgVal !== "" ? avgVal : "-";
+                    tds += `<td style="font-weight: 800; color: var(--secondary); background-color: #f8fafc;">${avgStr}</td>`;
+                    
+                    table.innerHTML = `
+                        <thead>
+                            <tr>
+                                ${ths}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                ${tds}
+                            </tr>
+                        </tbody>
+                    `;
+                    
                     scroll.appendChild(table);
                     wrapper.appendChild(scroll);
                     compContainer.appendChild(wrapper);
@@ -1206,6 +1208,44 @@ let selectedBulkClasses = [];
 let selectedBulkSubjects = [];
 let selectedBulkStages = [];
 
+function applyLevelToClassDependency() {
+    // Dynamic mapping of classes to their respective levels from db
+    const classToLevelMap = {};
+    Object.values(db.students).forEach(s => {
+        if (s.class && s.level) {
+            classToLevelMap[s.class] = s.level;
+        }
+    });
+
+    const classLabels = document.querySelectorAll('.class-cb-label');
+    classLabels.forEach(label => {
+        const associatedLevel = label.getAttribute('data-level');
+        const checkbox = label.querySelector('input[type="checkbox"]');
+        if (!checkbox) return;
+
+        const isLevelSelected = selectedBulkLevels.includes(associatedLevel);
+        if (!isLevelSelected) {
+            checkbox.disabled = true;
+            checkbox.checked = false;
+            label.classList.add('cb-dimmed');
+            
+            // Remove from selectedBulkClasses
+            selectedBulkClasses = selectedBulkClasses.filter(x => x !== checkbox.value);
+        } else {
+            if (checkbox.disabled) {
+                checkbox.disabled = false;
+                checkbox.checked = true;
+                label.classList.remove('cb-dimmed');
+                
+                // Add back to selectedBulkClasses
+                if (!selectedBulkClasses.includes(checkbox.value)) {
+                    selectedBulkClasses.push(checkbox.value);
+                }
+            }
+        }
+    });
+}
+
 function openBulkExportModal() {
     const modal = document.getElementById('bulkExportModal');
     if (!modal) return;
@@ -1222,6 +1262,14 @@ function openBulkExportModal() {
     selectedBulkSubjects = [...uniqueSubjects];
     selectedBulkStages = ['stage1', 'stage2', 'stage3', 'stage4', 'stage5']; // Map to database stage keys
     
+    // Map class names to their levels
+    const classToLevelMap = {};
+    Object.values(db.students).forEach(s => {
+        if (s.class && s.level) {
+            classToLevelMap[s.class] = s.level;
+        }
+    });
+
     // Populate Levels
     const levelsContainer = document.getElementById('bulkLevelsContainer');
     if (levelsContainer) {
@@ -1236,12 +1284,15 @@ function openBulkExportModal() {
     // Populate Classes
     const classesContainer = document.getElementById('bulkClassesContainer');
     if (classesContainer) {
-        classesContainer.innerHTML = uniqueClasses.map(cls => `
-            <label class="bulk-cb-label">
-                <input type="checkbox" checked value="${cls}" onchange="updateBulkSelections('class', this)">
-                <span>${cls}</span>
-            </label>
-        `).join('');
+        classesContainer.innerHTML = uniqueClasses.map(cls => {
+            const associatedLevel = classToLevelMap[cls] || "";
+            return `
+                <label class="bulk-cb-label class-cb-label" data-level="${associatedLevel}">
+                    <input type="checkbox" checked value="${cls}" onchange="updateBulkSelections('class', this)">
+                    <span>${cls}</span>
+                </label>
+            `;
+        }).join('');
     }
 
     // Populate Subjects
@@ -1267,6 +1318,7 @@ function openBulkExportModal() {
     }
     
     modal.classList.add('show');
+    applyLevelToClassDependency();
     calculateBulkCount();
 }
 
@@ -1278,6 +1330,7 @@ function updateBulkSelections(type, checkbox) {
         } else {
             selectedBulkLevels = selectedBulkLevels.filter(x => x !== val);
         }
+        applyLevelToClassDependency();
     } else if (type === 'class') {
         if (checkbox.checked) {
             if (!selectedBulkClasses.includes(val)) selectedBulkClasses.push(val);
@@ -1523,35 +1576,38 @@ function generateStudentPrintCardHTML(student, matchingSubjects, matchingStages)
         matchingSubjects.forEach(currentSubject => {
             const details = student.grades[currentSubject]?.[`${stage}_detail`];
             if (details && Object.keys(details).length > 0) {
-                let compRows = '';
+                let ths = '';
+                let tds = '';
                 Object.entries(details).forEach(([comp, val]) => {
-                    const statusClass = val === '1' ? 'mastered' : (val === '2' ? 'in-progress' : 'not-mastered');
-                    const statusText = val === '1' ? 'متحكم' : (val === '2' ? 'في طور التحكم' : 'غير متحكم');
-                    compRows += `
-                        <tr>
-                            <td>${comp}</td>
-                            <td class="status-cell ${statusClass}">${statusText}</td>
-                        </tr>
-                    `;
+                    ths += `<th>${comp}</th>`;
+                    tds += `<td>${val}</td>`;
                 });
                 
+                // Add Average Column at the end
+                ths += `<th style="background-color: #f1f5f9;">المعدل</th>`;
+                const avgVal = student.grades[currentSubject]?.[stage];
+                const avgStr = avgVal !== undefined && avgVal !== null && avgVal !== "" ? avgVal : "-";
+                tds += `<td style="font-weight: 800; color: var(--secondary); background-color: #f8fafc;">${avgStr}</td>`;
+                
                 competencyTablesHTML += `
-                    <div class="stage-comp-table-wrapper" style="margin-top: 10px;">
-                        <div class="comp-table-header">
-                            <span class="comp-stage"><i class="fas fa-calendar-day"></i> المرحلة ${stageNumStr}</span>
-                            <span class="comp-subject"><i class="fas fa-book"></i> ${currentSubject}</span>
+                    <div class="stage-comp-table-wrapper" style="margin-top: 10px; page-break-inside: avoid; break-inside: avoid;">
+                        <h5 style="font-size: 0.85rem; margin: 0 0 6px 0; color: var(--primary); font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
+                            تفاصيل كفايات المرحلة ${stageNumStr} (${currentSubject})
+                        </h5>
+                        <div class="comp-table-scroll">
+                            <table class="comp-table" style="width: 100%; font-size: 0.8rem; border-collapse: collapse; text-align: center;">
+                                <thead>
+                                    <tr>
+                                        ${ths}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        ${tds}
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <table class="comp-table">
-                            <thead>
-                                <tr>
-                                    <th>الكفاية / المهارة المستهدفة</th>
-                                    <th style="width: 130px;">درجة التحكم</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${compRows}
-                            </tbody>
-                        </table>
                     </div>
                 `;
             }
@@ -1596,8 +1652,16 @@ function generateStudentPrintCardHTML(student, matchingSubjects, matchingStages)
             </div>
             
             <div class="detail-body" style="display: grid; grid-template-columns: 280px 1fr; gap: 20px;">
-                <div class="detail-chart" style="height: 180px;">
-                    <canvas id="canvas-${student.massarId}" style="width: 100%; height: 180px;"></canvas>
+                <div class="detail-right-column" style="display: flex; flex-direction: column; gap: 10px;">
+                    <div class="detail-chart" style="height: 180px;">
+                        <canvas id="canvas-${student.massarId}" style="width: 100%; height: 180px;"></canvas>
+                    </div>
+                    <div class="student-notes" style="padding: 6px; border: 1px dashed var(--border); border-radius: 6px;">
+                        <h4 style="font-size: 0.85rem; margin-bottom: 4px; color: var(--primary);">ملاحظات الأستاذ (للقاء الآباء)</h4>
+                        <div style="font-size: 0.85rem; color: #334155; min-height: 25px; line-height: 1.4; white-space: pre-wrap;">
+                            ${student.note?.trim() || "لا توجد ملاحظات خاصة."}
+                        </div>
+                    </div>
                 </div>
                 <div class="detail-report">
                     <h3 style="font-size: 1rem; margin-bottom: 6px; color: var(--primary);">تقرير المستوى الدراسي</h3>
@@ -1618,13 +1682,6 @@ function generateStudentPrintCardHTML(student, matchingSubjects, matchingStages)
                                 ${tableRows}
                             </tbody>
                         </table>
-                    </div>
-                    
-                    <div class="student-notes" style="margin-top: 8px; padding: 6px; border: 1px dashed var(--border); border-radius: 6px;">
-                        <h4 style="font-size: 0.85rem; margin-bottom: 4px; color: var(--primary);">ملاحظات الأستاذ (للقاء الآباء)</h4>
-                        <div style="font-size: 0.85rem; color: #334155; min-height: 25px; line-height: 1.4; white-space: pre-wrap;">
-                            ${student.note?.trim() || "لا توجد ملاحظات خاصة."}
-                        </div>
                     </div>
                 </div>
             </div>

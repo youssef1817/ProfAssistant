@@ -640,9 +640,22 @@ svg.svg-inline--fa.fa-search {
     color: var(--danger);
 }
 
+.detail-body {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 20px;
+    padding-top: 1rem;
+}
+
+.detail-right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
 .detail-chart {
     height: 180px;
-    margin-bottom: 1rem;
+    margin-bottom: 0;
 }
 
 .detail-report {
@@ -650,6 +663,12 @@ svg.svg-inline--fa.fa-search {
     padding: 1rem;
     border-radius: 6px;
     border: 1px solid var(--border);
+}
+
+@media (max-width: 768px) {
+    .detail-body {
+        grid-template-columns: 1fr;
+    }
 }
 
 .detail-report h3 {
@@ -1892,32 +1911,31 @@ tr:hover {
 
     /* Detail body compression */
     .detail-body {
+        display: grid !important;
+        grid-template-columns: 280px 1fr !important;
+        gap: 20px !important;
+        padding-top: 6px !important;
+    }
+
+    .detail-right-column {
         display: flex !important;
         flex-direction: column !important;
-        gap: 12px !important; /* Elegant spacing between blocks */
-        padding-top: 6px !important;
+        gap: 10px !important;
     }
 
     /* Perfectly sized Chart height for A4 */
     .detail-chart {
         height: 160px !important;
         max-height: 160px !important;
-        margin-bottom: 8px !important;
+        margin-bottom: 0 !important;
         page-break-inside: avoid !important;
     }
 
-    /* Use Grid to elegantly place Grades & Notes side-by-side without horizontal compression bugs! */
     .detail-report {
-        display: grid !important;
-        grid-template-columns: 1.2fr 0.8fr !important; /* 2 columns: Grades on right (RTL), Notes on left */
-        gap: 12px !important;
+        display: block !important;
         background: transparent !important;
         padding: 0 !important;
         border: none !important;
-    }
-
-    .detail-report h3, .report-text {
-        grid-column: span 2 !important;
     }
 
     .detail-report h3 {
@@ -1994,12 +2012,11 @@ tr:hover {
         white-space: pre-wrap !important;
     }
 
-    /* Layout competency tables in a 2-column grid to squeeze space! */
+    /* Layout competency tables in a 1-column stack vertically to prevent cut-off! */
     .competency-tables-container {
-        grid-column: span 2 !important;
-        margin-top: 8px !important;
-        display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important; /* TWO COLUMNS! */
+        margin-top: 10px !important;
+        display: flex !important;
+        flex-direction: column !important;
         gap: 10px !important;
         page-break-inside: avoid !important;
     }
@@ -2161,6 +2178,18 @@ tr:hover {
 .bulk-cb-label:hover {
     background: rgba(37, 99, 235, 0.05);
     border-color: var(--secondary);
+}
+
+.bulk-cb-label.cb-dimmed {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.bulk-cb-label.cb-dimmed input[type="checkbox"] {
+    cursor: not-allowed;
+    opacity: 0.5;
 }
 
 .bulk-cb-label input[type="checkbox"] {
